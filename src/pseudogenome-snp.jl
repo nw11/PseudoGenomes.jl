@@ -43,7 +43,9 @@ function read_snp_positions_from_columns(filename::String, sequence_id_col=1, se
     positions = Int64[]
     ref = Char[]
     variant = Char[]
+    line_num = 0
     for line in eachline(open(filename))
+        line_num += 1
         if ismatch(ignore_rgx, line)
             continue
         end
@@ -53,6 +55,9 @@ function read_snp_positions_from_columns(filename::String, sequence_id_col=1, se
         push!(positions, parseint( line_array[2]))
         push!(ref,line_array[4][1] )
         push!(variant,line_array[5][1] )
+        if (line_num % 1000000) == 0
+            Lumberjack.info("read $line lines")
+        end
     end
     return DataFrame(seq_id = seq_id, position = positions, ref=ref, variant=variant)
 end
