@@ -56,7 +56,7 @@ function read_snp_positions_from_columns(filename::String, sequence_id_col=1, se
         push!(ref,line_array[4][1] )
         push!(variant,line_array[5][1] )
         if (line_num % 1000000) == 0
-            Lumberjack.info("read $line lines")
+            Lumberjack.info("read $line_num lines")
         end
     end
     return DataFrame(seq_id = seq_id, position = positions, ref=ref, variant=variant)
