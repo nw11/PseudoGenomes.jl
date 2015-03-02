@@ -100,11 +100,11 @@ function check_variant_alleles(seq,snps::DataFrame)
     return (num_substituted,num_ref,num_other)
 end
 
-function check_variant_alleles_in_fasta_file(filename,vcf_filename )
+function check_variant_alleles_in_fasta_file(filename,vcf_filename, seq_id_prefix="chr" )
     Lumberjack.info("Start reading VCF file")
-    snp_df = read_snp_positions_from_columns(vcf_filename)
+    snp_df = read_snp_positions_from_columns(vcf_filename,seq_id_prefix)
     fr = FastaReader{Vector{Char}}(filename)
-    Lumberjack.info("Start snp substitution of fasta file")
+    Lumberjack.info("Start checking snp substitution of fasta file")
     for (desc, seq) in fr
          seqlength = length(seq)
          Lumberjack.info("processing $desc - length: $seqlength")
