@@ -3,6 +3,7 @@ using DataFrames
 using Lumberjack
 using GZip
 
+include(Pkg.dir("PseudoGenomes", "src","pseudogenome-misc.jl"))
 #
 # This is a file formatted in the way you get it
 # from WTSI see here: ftp://ftp-mouse.sanger.ac.uk/current_svs/
@@ -64,7 +65,7 @@ function read_SV_file(filename::ASCIIString;gzip=true)
 end
 
 
-function get_strain_SV_type(SVs::DataFrame, strain_id::ASCIIString,sv_type::Regex; seq_id_prefix="chr")
+function get_strain_SV_type(SVs::DataFrame, strain_id::ASCIIString,sv_type::Regex; seq_id_format="ucsc")
 
     # get the strain
     strain_column = SVs[symbol(strain_id)]
@@ -97,7 +98,11 @@ function get_strain_SV_type(SVs::DataFrame, strain_id::ASCIIString,sv_type::Rege
         (start,stop)=split(position,'-')
         start_int = parseint(start)
         stop_int  = parseint(stop)
-        push!(chrs,seq_id_prefix*chr)
+        if seq_id_format == "ucsc"
+            push!(chrs, ens2ucsc(chr) )
+        else
+            push!(chrs, chr)
+        end
         push!(starts,start_int)
         push!(stops,stop_int)
     end

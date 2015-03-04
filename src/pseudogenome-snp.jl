@@ -1,6 +1,7 @@
 using FastaIO
 using DataFrames
 using Lumberjack
+include(Pkg.dir("PseudoGenomes", "src","pseudogenome-deletions.jl"))
 # Gives back a dictionary of dataframes
 function read_vcf_columns(filename::String, cols, sequence_id_col=1 )
     sequence_dict = Dict()
@@ -34,7 +35,7 @@ end
 # This is annoying. we don't have a vcf parser, and
 # also dataframes does not allow choosing of columns on readtable
 # so we don't get its type inference that would pretty much do the job
-function read_snp_positions_from_columns(filename::String, sequence_id_col=1, seq_id_prefix="chr" )
+function read_snp_positions_from_columns(filename::String, sequence_id_col=1, seq_id_format="ucsc" )
     sequence_dict = Dict()
     ignore_rgx = Regex("^#")
     cols = [1,2,4,5]
@@ -51,7 +52,12 @@ function read_snp_positions_from_columns(filename::String, sequence_id_col=1, se
         end
         # split and choose columns
         line_array =  map(x->strip(x), split(line,'\t') )
-        push!(seq_id, seq_id_prefix*line_array[1])
+
+        if seq_id_format == "ucsc"
+            push!(seq_id, ens2ucsc( line_array[1]) )
+        else
+           push!(seq_id, line_array[1] )
+        end
         push!(positions, parseint( line_array[2]))
         push!(ref,line_array[4][1] )
         push!(variant,line_array[5][1] )

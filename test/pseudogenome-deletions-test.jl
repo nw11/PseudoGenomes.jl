@@ -11,6 +11,7 @@ outpath = joinpath( Pkg.dir(),"PseudoGenomes","testdata","out.maskdeletions.fast
 SV_df = read_SV_file(SVs_filename, gzip=false)
 
 # -- test
+#"PWK_PhJ"
 strain_SVs_df = get_strain_SV_type(SV_df, "129P2_OlaHsd",Regex("DEL"))
 
 # -- test
