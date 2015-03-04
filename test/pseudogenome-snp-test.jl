@@ -18,6 +18,6 @@ facts("fasta-check") do
     @fact got => expected
 end
 
-
 # - test check variant alleles
 check_variant_alleles_in_fasta_file(outpath,vcf_path)
+
