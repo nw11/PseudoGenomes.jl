@@ -32,7 +32,7 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
     variants = Char[]
     line_num = 0
     df = DataFrame()
-
+    header = false
     if gzip
        #line_itr = eachline(GZip.open(filename) ) - GZip is broken for some versions of gzip - gives an extraline - see bug report
        line_itr  = eachline(`zcat $filename`)
@@ -41,12 +41,16 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
     end
 
     # peak at the first line - check for comment lines and header
+
     first_line = first(line_itr)
     if ismatch(heading_rgx,first_line )
         header = false
+        Lumberjack.info("Found Header in first line")
     elseif ismatch(comment_rgx,first_line)
         header = true
+         Lumberjack.info("Found comment in first line")
     else
+        Lumberjack.info("Found dataline in first line")
        parse_line_to_arrays!(seq_ids,positions,refs,variants, first_line, seq_id_format)
     end
     # ignore until header

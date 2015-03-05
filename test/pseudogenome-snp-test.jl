@@ -3,6 +3,7 @@ include(Pkg.dir("PseudoGenomes", "src","pseudogenome-snp.jl"))
 
 ref_fasta = joinpath( Pkg.dir(),"PseudoGenomes","testdata","test.fasta")
 vcf_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.vcf")
+vcf_noheader_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.noheader.vcf")
 outpath = joinpath( Pkg.dir(),"PseudoGenomes","testdata","out.fasta")
 
 # - test read_vcf_columns
@@ -22,3 +23,4 @@ end
 # - test check variant alleles
 check_variant_alleles_in_fasta_file(outpath,vcf_path)
 
+check_variant_alleles_in_fasta_file(outpath,vcf_noheader_path)
