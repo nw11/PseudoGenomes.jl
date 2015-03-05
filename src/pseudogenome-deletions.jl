@@ -36,7 +36,7 @@ function read_SV_file(filename::ASCIIString;gzip=true)
        Lumberjack.info("DETECT COMMENT: $line")
     end
 
-    Lumberjack.info("Load first line into dataframe") # to allow push! below
+    Lumberjack.info("Load first line into dataframe")
     first_data_line = first(line_itr)
     first_data_line=chomp(first_data_line)
     first_data_fields = split(first_data_line,'\t')
