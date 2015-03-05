@@ -146,7 +146,7 @@ function mask_fasta_file_with_strain_SV_deletions(filename,outfilename,SV_deleti
 end
 
 function mask_fasta_file_with_strain_SV_deletions(fastafile::ASCIIString,outfilename::ASCIIString, SVfile::ASCIIString,strain::ASCIIString)
-    SV_df = read_SV_file(SVs_filename)
+    SV_df = read_SV_file(SVfile)
     strain_SVs_df = get_strain_SVs(SV_df, strain,Regex("DEL"))
     mask_fasta_file_with_strain_SV_deletions(fastafile,outfilename,strain_SVs_df)
 end
