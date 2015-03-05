@@ -14,7 +14,8 @@ function read_SV_file(filename::ASCIIString;gzip=true)
     heading = Regex("^#CHROM")
     line_itr = nothing
     if gzip
-       line_itr = eachline(GZip.open(filename) )
+       #line_itr = eachline(GZip.open(filename) ) - GZip is broken for some versions of gzip - gives an extraline - see bug report
+       line_itr  = eachline(`zcat $filename`)
     else
        line_itr = eachline(open(filename) )
     end
