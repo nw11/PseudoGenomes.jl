@@ -30,7 +30,7 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
     positions = Int64[]
     refs = Char[]
     variants = Char[]
-    line_num = 0
+    data_line_num = 0 # this only counts datalines
     df = DataFrame()
     header = false
     if gzip
@@ -47,11 +47,12 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
         header = false
         Lumberjack.info("Found Header in first line")
     elseif ismatch(comment_rgx,first_line)
-        header = true
+         header = true
          Lumberjack.info("Found comment in first line")
     else
         Lumberjack.info("Found dataline in first line")
-       parse_line_to_arrays!(seq_ids,positions,refs,variants, first_line, seq_id_format)
+        parse_line_to_arrays!(seq_ids,positions,refs,variants, first_line, seq_id_format)
+        data_line_num +=1
     end
     # ignore until header
     if header
@@ -60,18 +61,25 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
             if ismatch(heading_rgx, line)
                 Lumberjack.info("DETECT HEADING: $line")
                 break
+            elseif ismatch(comment_rgx,line)
+               # anything above the line heading is a comment
+               Lumberjack.info("DETECT COMMENT: $line")
+            else
+               Lumberjack.info("ASSUME THIS IS A DATAROW\n$line")
+               parse_line_to_arrays!(seq_ids,positions,refs,variants, first_line, seq_id_format)
+               data_line_num +=1
+               break
             end
-            # anything above the line heading is a comment
-           Lumberjack.info("DETECT COMMENT: $line")
+
         end
     end
 
     # process datalines
     for line in line_itr
-        line_num += 1
+        data_line_num += 1
         parse_line_to_arrays!(seq_ids,positions,refs,variants, line, seq_id_format)
-        if (line_num % 1000000) == 0
-            Lumberjack.info("read $line_num lines")
+        if (data_line_num % 1000000) == 0
+            Lumberjack.info("read $data_line_num lines")
         end
     end
     return DataFrame(seq_id = seq_ids, position = positions, ref=refs, variant=variants)
