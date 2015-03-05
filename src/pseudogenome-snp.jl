@@ -3,15 +3,31 @@ using DataFrames
 using Lumberjack
 include(Pkg.dir("PseudoGenomes", "src","pseudogenome-deletions.jl"))
 
-function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc", gzip=false, header=true )
+function parse_line_to_arrays!(seq_id, position, ref, variant, line, seq_id_format)
+     line_array =  map(x->strip(x), split(line,'\t') )
+      if seq_id_format == "ucsc"
+          push!(seq_id, ens2ucsc( line_array[1]) )
+      else
+         push!(seq_id, line_array[1] )
+      end
+      push!(position, parseint( line_array[2]) )
+      push!(ref, line_array[4][1] )
+      push!(variant, line_array[5][1] )
+end
+
+# we only want the seq_id,pos,ref,variant from the vcf file.
+# if dataframes readtable allowed for columns choosing that would prob
+# do the job
+function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc", gzip=false )
     #locate comments and header
     heading_rgx = Regex("^#CHROM")
+    comment_rgx = Regex("^#")
     line_itr = nothing
     line_array=Any[]
-    seq_id = ASCIIString[]
+    seq_ids = ASCIIString[]
     positions = Int64[]
-    ref = Char[]
-    variant = Char[]
+    refs = Char[]
+    variants = Char[]
     line_num = 0
     df = DataFrame()
 
@@ -22,8 +38,16 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
        line_itr  = eachline(open(filename) )
     end
 
-
-    # check for comment lines and header
+    # peak at the first line - check for comment lines and header
+    first_line = first(line_itr)
+    if ismatch(heading_rgx,first_line )
+        header = false
+    elseif ismatch(comment_rgx,first_line)
+        header = true
+    else
+       parse_line_to_arrays!(seq_ids,positions,refs,variants, first_line, seq_id_format)
+    end
+    # ignore until header
     if header
         for line in line_itr
             line=chomp(line)
@@ -36,24 +60,15 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
         end
     end
 
+    # process datalines
     for line in line_itr
         line_num += 1
-        # split and choose columns
-        line_array =  map(x->strip(x), split(line,'\t') )
-
-        if seq_id_format == "ucsc"
-            push!(seq_id, ens2ucsc( line_array[1]) )
-        else
-           push!(seq_id, line_array[1] )
-        end
-        push!(positions, parseint( line_array[2]))
-        push!(ref,line_array[4][1] )
-        push!(variant,line_array[5][1] )
+        parse_line_to_arrays!(seq_ids,positions,refs,variants, line, seq_id_format)
         if (line_num % 1000000) == 0
             Lumberjack.info("read $line_num lines")
         end
     end
-    return DataFrame(seq_id = seq_id, position = positions, ref=ref, variant=variant)
+    return DataFrame(seq_id = seq_ids, position = positions, ref=refs, variant=variants)
 end
 
 function read_vcf_columns(filename::String, cols, sequence_id_col=1; gzip="false" )
@@ -163,7 +178,7 @@ function check_variant_alleles(seq,snps::DataFrame)
     return (num_substituted,num_ref,num_other,nuc_other_type)
 end
 
-function check_variant_alleles_in_fasta_file(fastafile,vcf_filename; seq_id_type="ucsc" )
+function check_variant_alleles_in_fasta_file(fastafile,vcf_filename; seq_id_type="ucsc"; )
     Lumberjack.info("Start reading VCF file")
     snp_df = read_snp_positions_from_columns(vcf_filename,seq_id_type)
     fr = FastaReader{Vector{Char}}(fastafile)
