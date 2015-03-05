@@ -182,7 +182,7 @@ end
 
 function check_variant_alleles_in_fasta_file(fastafile,vcf_filename; seq_id_type="ucsc" )
     Lumberjack.info("Start reading VCF file")
-    snp_df = read_snp_positions_from_columns(vcf_filename,seq_id_type)
+    snp_df = read_snp_positions_from_columns(vcf_filename,seq_id_type=seq_id_type)
     fr = FastaReader{Vector{Char}}(fastafile)
     Lumberjack.info("Start checking snp substitution of fasta file")
     for (desc, seq) in fr
