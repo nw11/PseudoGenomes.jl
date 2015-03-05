@@ -8,7 +8,6 @@ outpath = joinpath( Pkg.dir(),"PseudoGenomes","testdata","out.fasta")
 # - test read_vcf_columns
 read_snp_positions_from_columns(vcf_path, gzip=false )
 
-
 # - test substitute_
 expected_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata","expected.fasta")
 substitute_snps_in_fasta_file(ref_fasta,vcf_path,outpath)

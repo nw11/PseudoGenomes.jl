@@ -17,7 +17,9 @@ end
 
 # we only want the seq_id,pos,ref,variant from the vcf file.
 # if dataframes readtable allowed for columns choosing that would prob
-# do the job
+# do the job. This takes a file that has been queried by vcf-query for a
+# particular strain or individual or whatever.
+# e.g.  vcf-query  ftp://ftp-mouse.sanger.ac.uk/REL-1410-SNPs_Indels/mgp.v4.snps.dbSNP.vcf.gz -c CAST_EiJ -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO\n' > mgp.v4.snps.dbSNP.CAST.vcf
 function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc", gzip=false )
     #locate comments and header
     heading_rgx = Regex("^#CHROM")
@@ -178,7 +180,7 @@ function check_variant_alleles(seq,snps::DataFrame)
     return (num_substituted,num_ref,num_other,nuc_other_type)
 end
 
-function check_variant_alleles_in_fasta_file(fastafile,vcf_filename; seq_id_type="ucsc"; )
+function check_variant_alleles_in_fasta_file(fastafile,vcf_filename; seq_id_type="ucsc" )
     Lumberjack.info("Start reading VCF file")
     snp_df = read_snp_positions_from_columns(vcf_filename,seq_id_type)
     fr = FastaReader{Vector{Char}}(fastafile)
