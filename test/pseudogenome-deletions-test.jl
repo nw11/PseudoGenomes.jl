@@ -12,7 +12,7 @@ SV_df = read_SV_file(SVs_filename, gzip=false)
 
 # -- test
 #"PWK_PhJ"
-strain_SVs_df = get_strain_SV_type(SV_df, "129P2_OlaHsd",Regex("DEL"))
+strain_SVs_df = get_strain_SVs(SV_df, "129P2_OlaHsd",Regex("DEL"))
 
 # -- test
 mask_fasta_file_with_strain_SV_deletions(ref_fasta,outpath,strain_SVs_df)

@@ -65,7 +65,7 @@ function read_SV_file(filename::ASCIIString;gzip=true)
 end
 
 
-function get_strain_SV_type(SVs::DataFrame, strain_id::ASCIIString,sv_type::Regex; seq_id_format="ucsc")
+function get_strain_SVs(SVs::DataFrame, strain_id::ASCIIString,sv_type::Regex; seq_id_format="ucsc")
 
     # get the strain
     strain_column = SVs[symbol(strain_id)]
@@ -82,7 +82,6 @@ function get_strain_SV_type(SVs::DataFrame, strain_id::ASCIIString,sv_type::Rege
         # so this prob should be take this into account in case they change the fields in the future.
 
         fields = split(row, ';')
-        println("fields: $fields")
 
         if length(fields) == 1
             continue
@@ -148,6 +147,6 @@ end
 
 function mask_fasta_file_with_strain_SV_deletions(fastafile::ASCIIString,outfilename::ASCIIString, SVfile::ASCIIString,strain::ASCIIString)
     SV_df = read_SV_file(SVs_filename)
-    strain_SVs_df = get_strain_SV_type(SV_df, strain,Regex("DEL"))
+    strain_SVs_df = get_strain_SVs(SV_df, strain,Regex("DEL"))
     mask_fasta_file_with_strain_SV_deletions(fastafile,outfilename,strain_SVs_df)
 end
