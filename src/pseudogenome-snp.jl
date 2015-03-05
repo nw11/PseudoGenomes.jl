@@ -66,7 +66,7 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
                Lumberjack.info("DETECT COMMENT: $line")
             else
                Lumberjack.info("ASSUME THIS IS A DATAROW\n$line")
-               parse_line_to_arrays!(seq_ids,positions,refs,variants, first_line, seq_id_format)
+               parse_line_to_arrays!(seq_ids,positions,refs,variants, line, seq_id_format)
                data_line_num +=1
                break
             end
