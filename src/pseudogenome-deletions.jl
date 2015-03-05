@@ -9,6 +9,7 @@ include(Pkg.dir("PseudoGenomes", "src","pseudogenome-misc.jl"))
 # from WTSI see here: ftp://ftp-mouse.sanger.ac.uk/current_svs/
 #
 function read_SV_file(filename::ASCIIString;gzip=true)
+    Lumberjack.info("Start Reading $filename")
     num_lines=0
     heading = Regex("^#CHROM")
     line_itr = nothing
@@ -24,28 +25,29 @@ function read_SV_file(filename::ASCIIString;gzip=true)
     for line in line_itr
        line=chomp(line)
        if ismatch(heading, line)
-           println("HEADING: $line")
+           Lumberjack.info("DETECT HEADING: $line")
            header = split(line,'\t')
            species_names=header[5:end]
-           println("The species names are $species_names")
+           Lumberjack.info("The species names are $species_names")
            break
        end
        # anything above the line heading is a comment
-       println("COMMENT: $line")
+       Lumberjack.info("DETECT COMMENT: $line")
     end
 
+    Lumberjack.info("Load first line into dataframe") # to allow push! below
     first_data_line = first(line_itr)
     first_data_line=chomp(first_data_line)
     first_data_fields = split(first_data_line,'\t')
     df[:seq_id]     = first_data_fields[1]
-    df[:start]   = first_data_fields[2]
-    df[:stop]    = first_data_fields[3]
-    df[:formats] = first_data_fields[4]
-    for field_idx = 5:length(header)
+    df[:start]      = first_data_fields[2]
+    df[:stop]       = first_data_fields[3]
+    df[:formats]    = first_data_fields[4]
+    for field_idx   = 5:length(header)
         df[symbol(header[field_idx])] = first_data_fields[field_idx]
     end
+    Lumberjack.info("dataframe after first dataline: $df")
 
-    println("dataframe after first dataline: $df")
     df_num_cols = ncol(df)
     for line in line_itr
          line=chomp(line)
@@ -54,12 +56,12 @@ function read_SV_file(filename::ASCIIString;gzip=true)
          if num_fields == df_num_cols
              push!(df,fields)
          else
-             error("Number of fields parsed inconsistent $fields from $line.\nNumber fields parsed: $num_fields Num Cols Expected $df_num_cols")
+             error("Number of fields parsed inconsistent $fields from $line.\nNumber fields parsed: $num_fields Num Cols Expected $df_num_cols\nLine number: $(num_lines+1)")
          end
          num_lines += 1
     end
     #DELS = SVs[ SVs[:SV_type] .== "DEL", :]
-    println( "Total number of lines: $num_lines")
+    Lumberjack.info( "Total number of lines: $num_lines")
 
     return df
 end
