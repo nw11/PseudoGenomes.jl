@@ -62,8 +62,7 @@ function read_SV_file(filename::ASCIIString;gzip=true)
          num_lines += 1
     end
     #DELS = SVs[ SVs[:SV_type] .== "DEL", :]
-    Lumberjack.info( "Total number of lines: $num_lines")
-
+    Lumberjack.info( "Total number of data lines: $(num_lines+1)")
     return df
 end
 

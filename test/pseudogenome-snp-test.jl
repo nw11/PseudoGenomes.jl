@@ -1,11 +1,9 @@
 using FactCheck
 include(Pkg.dir("PseudoGenomes", "src","pseudogenome-snp.jl"))
 
-
 ref_fasta = joinpath( Pkg.dir(),"PseudoGenomes","testdata","test.fasta")
 vcf_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.vcf")
 outpath = joinpath( Pkg.dir(),"PseudoGenomes","testdata","out.fasta")
-
 
 # - test substitute_
 expected_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata","expected.fasta")
