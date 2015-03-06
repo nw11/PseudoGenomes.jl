@@ -5,7 +5,7 @@ ref_fasta = joinpath( Pkg.dir(),"PseudoGenomes","testdata","test.fasta")
 vcf_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.vcf")
 vcf_noheader_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.noheader.vcf")
 outpath = joinpath( Pkg.dir(),"PseudoGenomes","testdata","out.fasta")
-
+cpgbedfile = joinpath( Pkg.dir(),"PseudoGenomes","testdata","cpgs.bedgraph")
 # - test read_vcf_columns
 read_snp_positions_from_columns(vcf_path, gzip=false )
 
@@ -20,7 +20,24 @@ facts("fasta-check") do
     @fact got => expected
 end
 
+
+# -  test cpg
+a = ['A','C','C','C','G','T','G','C','G','A']
+cgpos = find_cpgs(a)
+expected_cgpos = [4,8]
+facts("cpg-check") do
+    @fact cgpos => expected_cgpos
+end
+
+
+# - make cpg bedfile
+make_cpg_bedfile(outpath,cpgbedfile)
+
+
 # - test check variant alleles
+# - switch logging to file and check file is correct
 check_variant_alleles_in_fasta_file(outpath,vcf_path)
 
+# -
+# -
 check_variant_alleles_in_fasta_file(outpath,vcf_noheader_path)

@@ -70,7 +70,6 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
                data_line_num +=1
                break
             end
-
         end
     end
 
@@ -228,4 +227,58 @@ function substitute_snps_in_fasta_file(filename,vcf_filename , outfilename)
     end
    Lumberjack.info("read $(fr.num_parsed) entries")
    close(fw)
+end
+
+function find_cpgs(seq)
+    CGpos=Int64[] # make the array a particular max size if this should go faster
+    cflag=false
+    cpos =1
+    for i in 1:length(seq)
+        if seq[i] == 'C' || seq[i] == 'c'
+            cflag=true
+            cpos = i
+        elseif seq[i] == 'G' || seq[i] == 'g'
+            if cflag == true
+               push!(CGpos,cpos)
+            end
+            cflag=false
+        else
+            cflag = false
+        end
+    end
+    return CGpos
+end
+
+#function write_cpg_bedfile(fastafile, bedfile)
+#     make_cpg_bedfile(fastfile)
+#end
+
+function add_sequence_features!(gtable::DataFrame,seq_id,starts;stops=[])
+    for i=1:length(starts)
+        if length(stops) == 0
+            push!(gtable, [seq_id, starts[i],starts[i]+1] )
+        else
+            push!(gtable, [seq_id, starts[i],stops[i]])
+        end
+    end
+end
+
+function make_cpg_bedfile(fastafile,bedfile)
+    # for each fasta line
+    fr = FastaReader{Vector{Char}}(fastafile)
+    CG_table = DataFrame(seq_id=String[],start=Int64[],stop=Int64[])
+    Lumberjack.info("Start CG detection in fasta file")
+    for (desc, seq) in fr
+         seqlength = length(seq)
+         Lumberjack.info("processing $desc - length: $seqlength")
+         CG_positions = find_cpgs(seq)
+         println("CGS: $CG_positions")
+         add_sequence_features!(CG_table,desc,CG_positions)
+         num_cgs = length(CG_positions)
+         Lumberjack.info("num CGs found : $num_cgs")
+    end
+    close(fr)
+    Lumberjack.info("read $(fr.num_parsed) entries")
+    writetable(bedfile,CG_table, separator='\t')
+    # run through sequence checking for cpgs
 end
