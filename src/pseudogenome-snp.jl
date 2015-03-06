@@ -65,7 +65,7 @@ function read_snp_positions_from_columns(filename::String; seq_id_format="ucsc",
                # anything above the line heading is a comment
                Lumberjack.info("DETECT COMMENT: $line")
             else
-               Lumberjack.info("ASSUME THIS IS A DATAROW\n$line")
+               Lumberjack.info("ASSUME THIS IS FIRST DATAROW\n$line")
                parse_line_to_arrays!(seq_ids,positions,refs,variants, line, seq_id_format)
                data_line_num +=1
                break
@@ -278,7 +278,7 @@ function make_cpg_bedfile(fastafile,bedfile)
          Lumberjack.info("num CGs found : $num_cgs")
     end
     close(fr)
-    Lumberjack.info("read $(fr.num_parsed) entries")
+    Lumberjack.info("read $(fr.num_parsed) sequences")
     writetable(bedfile,CG_table, separator='\t')
     # run through sequence checking for cpgs
 end

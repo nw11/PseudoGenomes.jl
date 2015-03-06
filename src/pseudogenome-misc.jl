@@ -15,3 +15,6 @@ function ucsc2ens(seq_id::String)
     end
 end
 
+function make_diploid(fastafile1, id1, fastafile2, id2, output_fasta)
+    #run through each assign id to description
+end

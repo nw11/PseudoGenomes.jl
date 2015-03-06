@@ -47,7 +47,7 @@ function read_SV_file(filename::ASCIIString;gzip=true)
     for field_idx   = 5:length(header)
         df[symbol(header[field_idx])] = first_data_fields[field_idx]
     end
-    Lumberjack.info("dataframe after first dataline: $df")
+    Lumberjack.info("First dataline: $df")
 
     df_num_cols = ncol(df)
     for line in line_itr
@@ -129,7 +129,7 @@ function mask_fasta_file_with_strain_SV_deletions(filename,outfilename,SV_deleti
 
     fr = FastaReader{Vector{Char}}(filename)
     fw = FastaWriter(outfilename)
-    Lumberjack.info("Start masking of fasta file")
+    Lumberjack.info("Start masking fasta file")
     for (desc, seq) in fr
          seqlength = length(seq)
          Lumberjack.info("processing $desc - length: $seqlength")
