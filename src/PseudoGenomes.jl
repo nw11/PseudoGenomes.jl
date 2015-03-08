@@ -16,5 +16,5 @@ include(Pkg.dir("PseudoGenomes","src","pseudogenome-deletions.jl"))
 
 
 export make_diploid
-include(Pkg.dir("PseudoGenomes","src","pseudogenome-deletions.jl"))
+include(Pkg.dir("PseudoGenomes","src","pseudogenome-misc.jl"))
 end # module
