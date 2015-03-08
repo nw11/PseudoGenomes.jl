@@ -13,4 +13,8 @@ export mask_fasta_file_with_strain_SV_deletions
 export get_strain_SVs
 
 include(Pkg.dir("PseudoGenomes","src","pseudogenome-deletions.jl"))
+
+
+export make_diploid
+include(Pkg.dir("PseudoGenomes","src","pseudogenome-deletions.jl"))
 end # module
