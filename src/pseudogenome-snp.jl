@@ -264,7 +264,6 @@ function add_sequence_features!(gtable::DataFrame,seq_id,starts;stops=[])
 end
 
 function make_cpg_bedfile(fastafile,bedfile)
-    # for each fasta line
     fr = FastaReader{Vector{Char}}(fastafile)
     CG_table = DataFrame(seq_id=String[],start=Int64[],stop=Int64[])
     Lumberjack.info("Start CG detection in fasta file")
@@ -272,13 +271,11 @@ function make_cpg_bedfile(fastafile,bedfile)
          seqlength = length(seq)
          Lumberjack.info("processing $desc - length: $seqlength")
          CG_positions = find_cpgs(seq)
-         println("CGS: $CG_positions")
          add_sequence_features!(CG_table,desc,CG_positions)
          num_cgs = length(CG_positions)
          Lumberjack.info("num CGs found : $num_cgs")
     end
     close(fr)
     Lumberjack.info("read $(fr.num_parsed) sequences")
-    writetable(bedfile,CG_table, separator='\t')
-    # run through sequence checking for cpgs
+    writetable(bedfile, CG_table, separator='\t')
 end
