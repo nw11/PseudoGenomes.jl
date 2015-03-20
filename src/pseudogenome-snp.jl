@@ -113,7 +113,8 @@ end
 # See vcf-file1.vcf for the kind of file you would expect this function to take.
 # Essentially a vcf file or one without a heading, but with the mandatory columns present.
 # We don't have a vcf parser, and dataframes readtable doesnt allow to choose
-# columns meaning we don't get it's type inferenc as it would do the job.
+# columns meaning we don't get its datatype inference, as that would do the job.
+
 function read_snp_positions_from_columnsOld(filename::String,seq_id_format="ucsc" )
     sequence_dict = Dict()
     ignore_rgx = Regex("^#")
