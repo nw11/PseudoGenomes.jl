@@ -5,7 +5,8 @@ ref_fasta = joinpath( Pkg.dir(),"PseudoGenomes","testdata","test.fasta")
 vcf_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.vcf")
 vcf_noheader_path = joinpath( Pkg.dir(),"PseudoGenomes","testdata", "vcf-file2.noheader.vcf")
 outpath = joinpath( Pkg.dir(),"PseudoGenomes","testdata","out.fasta")
-cpgbedfile = joinpath( Pkg.dir(),"PseudoGenomes","testdata","cpgs.bedgraph")
+cpgbedfile1 = joinpath( Pkg.dir(),"PseudoGenomes","testdata","cpgs1.bedgraph")
+cpgbedfile2 = joinpath( Pkg.dir(),"PseudoGenomes","testdata","cpgs2.bedgraph")
 # - test read_vcf_columns
 read_snp_positions_from_columns(vcf_path, gzip=false )
 
@@ -31,7 +32,9 @@ end
 
 
 # - make cpg bedfile
-make_cpg_bedfile(outpath,cpgbedfile)
+make_cpg_bedfile_type1(outpath,cpgbedfile1)
+
+make_cpg_bedfile_type2(outpath,cpgbedfile2)
 
 
 # - test check variant alleles
