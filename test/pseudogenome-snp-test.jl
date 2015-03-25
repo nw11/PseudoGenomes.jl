@@ -25,7 +25,8 @@ end
 # -  test cpg
 a = ['A','C','C','C','G','T','G','C','G','A']
 cgpos = find_cpgs(a)
-expected_cgpos = [4,8]
+# default zero based
+expected_cgpos = [3,7]
 facts("cpg-check") do
     @fact cgpos => expected_cgpos
 end

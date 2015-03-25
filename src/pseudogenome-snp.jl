@@ -255,7 +255,7 @@ function add_cpg_sequence_features!(gtable::DataFrame,seq_id,starts;source="sour
     for i=1:length(starts)
        # if length(stops) == 0
        if coord_type == "zero-based"
-           push!(gtable, [seq_id, starts[i],starts[i]-1,"+",source])
+           push!(gtable, [seq_id, starts[i]-1,starts[i]-1,"+",source])
            push!(gtable, [seq_id, starts[i],starts[i],"-",source])
        else
            push!(gtable, [seq_id, starts[i],starts[i],"+",source])
@@ -288,7 +288,6 @@ function make_cg_bedfile(fastafile,bedfile;coord_type="zero-based")
 end
 
 
-
 #function write_cpg_bedfile(fastafile, bedfile)
 #     make_cpg_bedfile(fastfile)
 #end
@@ -304,8 +303,6 @@ end
 #    end
 #end
 
-#
-#
 #
 #function make_cpg_bedfile_type1(fastafile,bedfile)
 #    fr = FastaReader{Vector{Char}}(fastafile)
